@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.sicredi.assembleia.model.Associado;
 import br.com.sicredi.assembleia.service.AssociadoService;
-import br.com.sicredi.assembleia.v1.dto.AssociadoDTO;
+import br.com.sicredi.assembleia.v1.dto.request.AssociadoReqDTO;
+import br.com.sicredi.assembleia.v1.dto.response.AssociadoResDTO;
 
 @RestController
 @RequestMapping(value = "v1/associados")
@@ -31,35 +32,33 @@ public class AssociadoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public AssociadoDTO  postAssociado(@RequestBody AssociadoDTO associadoDTO) {    
-        Associado associado = convertToEntity(associadoDTO);    
-        return convertToDTO(associadoService.save(associado));
+    public AssociadoResDTO  postAssociado(@RequestBody AssociadoReqDTO associadoDTO) {    
+        return convertToDTO(associadoService.save(convertToEntity(associadoDTO)));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping
-    public List<AssociadoDTO> getAssociados() {
-        List<Associado> associados = associadoService.findAll();
-        return associados.stream()
-                         .map(this::convertToDTO)
-                         .collect(Collectors.toList());
+    public List<AssociadoResDTO> getAssociados() {
+        return associadoService.findAll()
+                               .stream()
+                               .map(this::convertToDTO)
+                               .collect(Collectors.toList());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping(value="/{cpf}")
-    public AssociadoDTO getAssociadoById(@PathVariable String cpf) {
+    public AssociadoResDTO getAssociadoById(@PathVariable String cpf) {
         return convertToDTO(associadoService.findById(cpf));
     }
     
-
-    private Associado convertToEntity(AssociadoDTO associadoDTO){
+    private Associado convertToEntity(AssociadoReqDTO associadoDTO){
         return modelMapper.map(associadoDTO, Associado.class); 
     }
 
-    private AssociadoDTO convertToDTO(Associado associado){
-        return modelMapper.map(associado, AssociadoDTO.class); 
+    private AssociadoResDTO convertToDTO(Associado associado){
+        return modelMapper.map(associado, AssociadoResDTO.class); 
     }
     
 }
