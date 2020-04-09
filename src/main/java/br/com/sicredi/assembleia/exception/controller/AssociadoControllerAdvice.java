@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
-import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
+import br.com.sicredi.assembleia.exception.RecursoDuplicadoException;
+import br.com.sicredi.assembleia.exception.RecursoNaoEncontradoException;
 
 @RestControllerAdvice
 public class AssociadoControllerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ResourceDuplicatedException.class)
-    protected ResponseEntity<Object> handleConflict(ResourceDuplicatedException ex, WebRequest request) {
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    protected ResponseEntity<Object> handleConflict(RecursoDuplicadoException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    protected ResponseEntity<Object> handleNotFound(RecursoNaoEncontradoException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 }

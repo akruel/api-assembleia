@@ -4,13 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
-public class ResourceDuplicatedException extends RuntimeException {
+public class RecursoDuplicadoException extends RuntimeException {
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
-    public ResourceDuplicatedException(String message) {
+    public RecursoDuplicadoException(String message) {
         super(message);
     }
 }
