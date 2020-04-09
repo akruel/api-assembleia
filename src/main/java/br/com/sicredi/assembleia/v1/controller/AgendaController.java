@@ -1,10 +1,8 @@
 package br.com.sicredi.assembleia.v1.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.sicredi.assembleia.model.Agenda;
+import br.com.sicredi.assembleia.mapper.AgendaMapper;
 import br.com.sicredi.assembleia.service.AgendaService;
 import br.com.sicredi.assembleia.v1.dto.request.AgendaRequest;
 import br.com.sicredi.assembleia.v1.dto.request.SessionRequest;
 import br.com.sicredi.assembleia.v1.dto.response.AgendaResponse;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("v1/agendas")
@@ -29,50 +28,38 @@ public class AgendaController {
     @Autowired
     private AgendaService agendaService;
 
-    @Autowired
-    ModelMapper modelMapper;
-
     @PostMapping
+    @ApiOperation("Criar uma pauta")
     public AgendaResponse postPauta(@RequestBody AgendaRequest agendaDTO) {
-        return convertToDTO(agendaService.save(convertToEntity(agendaDTO)));
+        return AgendaMapper.convertToResponse(agendaService.save(AgendaMapper.convertToEntity(agendaDTO)));
     }
     
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<AgendaResponse> getPautas() {
+    @ApiOperation("Buscar todas as pautas")
+    public List<AgendaResponse> getAgendas() {
         return agendaService.findAll()
                             .stream()
-                            .map(this::convertToDTO)
+                            .map(AgendaMapper::convertToResponse)
                             .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AgendaResponse getPautaById(@PathVariable Long id) {
-        return convertToDTO(agendaService.findById(id));
+    @ApiOperation("Buscar uma pauta por ID")
+    public AgendaResponse getAgendaById(@PathVariable Long id) {
+        return AgendaMapper.convertToResponse(agendaService.findById(id));
     }
 
     @PutMapping("/openSession")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public AgendaResponse abrirSessao(@RequestBody SessionRequest sessionDTO) {
-        Long duracaoEmMinutos = sessionDTO.getDurationInMinutes();
-        return convertToDTO(agendaService.openSession(convertSessaoReqToPautaEntity(sessionDTO), duracaoEmMinutos));
-    }
-    
-    private Agenda convertSessaoReqToPautaEntity(SessionRequest sessionDTO){
-        return Agenda.builder()
-                     .id(sessionDTO.getAgendaID())
-                     .build(); 
-    }
-    
-    private Agenda convertToEntity(AgendaRequest agendaDTO){
-        return modelMapper.map(agendaDTO, Agenda.class); 
-    }
-
-    private AgendaResponse convertToDTO(Agenda agenda){
-        AgendaResponse pautaRestDTO = modelMapper.map(agenda, AgendaResponse.class); 
-        pautaRestDTO.setSessionStatus(agenda.getSessionEnd() != null && LocalDateTime.now().isBefore(agenda.getSessionEnd()) ? "ATIVA" : "INATIVA");
-        return pautaRestDTO;
+    @ApiOperation(
+        value = "Abrir uma sessão para votação em uma pauta",
+        notes = "Necessário um ID de pauta válido"
+    )
+    public AgendaResponse openSession(@RequestBody SessionRequest sessionRequest) {
+        Long duracaoEmMinutos = sessionRequest.getDurationInMinutes();
+        return AgendaMapper.convertToResponse(agendaService.openSession(AgendaMapper.sessionToAgendaEntity(sessionRequest), duracaoEmMinutos));
     }
 
 }
