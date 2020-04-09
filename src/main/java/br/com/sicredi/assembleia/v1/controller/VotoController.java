@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.sicredi.assembleia.model.Agenda;
+import br.com.sicredi.assembleia.mapper.VoteMapper;
 import br.com.sicredi.assembleia.model.Vote;
-import br.com.sicredi.assembleia.model.VotePK;
 import br.com.sicredi.assembleia.service.VoteService;
 import br.com.sicredi.assembleia.v1.dto.request.VoteRequest;
-import br.com.sicredi.assembleia.v1.dto.response.AgendaResponse;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
 import br.com.sicredi.assembleia.v1.dto.response.VoteResponse;
+import io.swagger.annotations.ApiOperation;
 
 
 
@@ -36,56 +35,29 @@ public class VotoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Vote postVoto(@RequestBody VoteRequest votoDTO) {
-        return votoService.save(convertToEntity(votoDTO));
+    @ApiOperation(
+        value = "Votar em uma pauta",
+        notes = "Necessita que a pauta esteja com a sessão aberta"
+        )
+    public Vote postVoto(@RequestBody VoteRequest voteRequest) {
+        return votoService.save(VoteMapper.convertToEntity(voteRequest));
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Buscar todos os votos em todas as pautas")
     public List<VoteResponse> getVotos() {
         return votoService.findAll()
                           .stream()
-                          .map(this::convertToDTO)
+                          .map(VoteMapper::convertToResponse)
                           .collect(Collectors.toList());
     }
 
     @GetMapping("sessionResult/{agendaID}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Buscar o resultado da votação em uma pauta")
     public SessionResponse getResult(@PathVariable Long agendaID) {
         return votoService.calculateResult(agendaID);
-    }
-    
-
-    private Vote convertToEntity(VoteRequest voteDTO){
-        Agenda agenda = Agenda.builder()
-                              .id(voteDTO.getAgendaID())
-                              .build();
-
-        VotePK pk = VotePK.builder()
-                          .associated(voteDTO.getAssociated())
-                          .agenda(agenda)
-                          .build();
-
-        return Vote.builder()
-                   .pk(pk)
-                   .decision(voteDTO.getDecision())
-                   .build(); 
-    }
-    
-    
-    private VoteResponse convertToDTO(Vote vote) {
-        String associated = vote.getPk().getAssociated();
-        AgendaResponse agendaDTO = convertPautaToDTO(vote.getPk().getAgenda());
-        Boolean decision = vote.isDecision();
-        return VoteResponse.builder()
-                         .associated(associated)
-                         .agenda(agendaDTO)
-                         .decision(decision)
-                         .build();                       
-    }
-
-    private AgendaResponse convertPautaToDTO(Agenda agenda){
-        return modelMapper.map(agenda, AgendaResponse.class); 
     }
 
 }
