@@ -3,7 +3,7 @@ package br.com.sicredi.assembleia.v1.dto.response;
 import lombok.Data;
 
 @Data
-public class AssociadoResDTO {
+public class AssociatedResponse {
     private String cpf;
-    private String nome;
+    private String neme;
 }
