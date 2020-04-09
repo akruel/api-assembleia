@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +26,7 @@ import br.com.sicredi.assembleia.v1.dto.response.VoteResponse;
 
 
 @RestController
-@RequestMapping("v1/votos")
+@RequestMapping("v1/votes")
 public class VotoController {
     @Autowired
     private VoteService votoService;
@@ -37,14 +36,12 @@ public class VotoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     public Vote postVoto(@RequestBody VoteRequest votoDTO) {
         return votoService.save(convertToEntity(votoDTO));
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     public List<VoteResponse> getVotos() {
         return votoService.findAll()
                           .stream()
@@ -52,9 +49,8 @@ public class VotoController {
                           .collect(Collectors.toList());
     }
 
-    @GetMapping("agendaResult/{agendaID}")
+    @GetMapping("sessionResult/{agendaID}")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     public SessionResponse getResult(@PathVariable Long agendaID) {
         return votoService.calculateResult(agendaID);
     }
