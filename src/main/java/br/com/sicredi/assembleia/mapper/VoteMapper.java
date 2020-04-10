@@ -36,7 +36,7 @@ public class VoteMapper {
 
         return Vote.builder()
                    .pk(pk)
-                   .decision(voteRequest.getDecision())
+                   .decision(voteRequest.getDecision().equals("Sim") ? Boolean.TRUE : Boolean.FALSE)
                    .build(); 
     }
 }

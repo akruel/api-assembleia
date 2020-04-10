@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.sicredi.assembleia.exception.RecursoNaoEncontradoException;
+import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.model.Agenda;
 import br.com.sicredi.assembleia.repository.AgendaRepository;
 import br.com.sicredi.assembleia.service.AgendaService;
@@ -24,7 +24,7 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public Agenda findById(Long id) {
-        return agendaRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada!"));
+        return agendaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pauta não encontrada!"));
     }
 
     @Override
