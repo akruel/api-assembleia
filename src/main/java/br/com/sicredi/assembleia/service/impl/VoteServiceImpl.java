@@ -7,19 +7,22 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.sicredi.assembleia.exception.RecursoDuplicadoException;
-import br.com.sicredi.assembleia.exception.RecursoNaoEncontradoException;
+import br.com.sicredi.assembleia.client.UserInfoClient;
+import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
+import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.model.Agenda;
 import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.model.VotePK;
 import br.com.sicredi.assembleia.repository.VoteRepository;
 import br.com.sicredi.assembleia.service.AgendaService;
-import br.com.sicredi.assembleia.service.AssociatedService;
 import br.com.sicredi.assembleia.service.VoteService;
 import br.com.sicredi.assembleia.util.ResultEnum;
+import br.com.sicredi.assembleia.util.StatusEnum;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class VoteServiceImpl implements VoteService {
 
     @Autowired
@@ -28,8 +31,7 @@ public class VoteServiceImpl implements VoteService {
     @Autowired
     private AgendaService agendaService;
 
-    @Autowired
-    private AssociatedService associatedService;
+    private final UserInfoClient userInfoClient;
 
     @Override
     public Vote save(Vote vote) {
@@ -40,24 +42,21 @@ public class VoteServiceImpl implements VoteService {
         boolean sessaoAtiva = sessionEnd != null && LocalDateTime.now().isBefore(sessionEnd);
 
         if (!sessaoAtiva) {
-            throw new RecursoNaoEncontradoException("Sessão para a pauta " + agenda.getName() + " não está aberta!");
-        }
-
-        switch (associatedService.checkStatusToVote(cpf)) {
-            case UNABLE_TO_VOTE:
-                throw new RecursoNaoEncontradoException("Associado " + cpf + " não está habilitado para votar!");
-            case INVALID:
-                throw new RecursoNaoEncontradoException(
-                        "O CPF " + cpf + " não é válido. Por favor, informe um CPF válido para votar!");
-            default:
-                break;
+            throw new ResourceNotFoundException("Sessão para a pauta " + agenda.getName() + " não está aberta!");
         }
 
         if (voteRepository.findByPkAssociated(cpf).isPresent()) {
-            throw new RecursoDuplicadoException("Seu voto para esta pauta já foi computado!");
+            throw new ResourceDuplicatedException("Seu voto para esta pauta já foi computado!");
         }
 
-        VotePK pk = VotePK.builder().associated(cpf).agenda(agenda).build();
+        if (userInfoClient.checkStatusToVote(cpf).getStatus() == StatusEnum.UNABLE_TO_VOTE) {
+            throw new ResourceNotFoundException("Associado " + cpf + " não está habilitado para votar!");
+        }
+
+        VotePK pk = VotePK.builder()
+                          .associated(cpf)
+                          .agenda(agenda)
+                          .build();
 
         vote.setPk(pk);
 
@@ -74,12 +73,12 @@ public class VoteServiceImpl implements VoteService {
         List <Vote> votes = voteRepository.findByPkAgendaId(agendaID);
 
         List <Vote> votesNo = votes.stream()
-                                   .filter(v -> v.isDecision() == false)
+                                   .filter(v -> v.isDecision() == Boolean.FALSE)
                                    .collect(Collectors.toList());
 
         
         List <Vote> votesYes = votes.stream()
-                                   .filter(v -> v.isDecision() == true)
+                                   .filter(v -> v.isDecision() == Boolean.TRUE)
                                    .collect(Collectors.toList());
 
         int result = votes.stream()

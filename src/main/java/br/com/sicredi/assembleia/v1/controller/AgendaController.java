@@ -3,6 +3,8 @@ package br.com.sicredi.assembleia.v1.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,8 @@ public class AgendaController {
 
     @PostMapping
     @ApiOperation("Criar uma pauta")
-    public AgendaResponse postPauta(@RequestBody AgendaRequest agendaDTO) {
-        return AgendaMapper.convertToResponse(agendaService.save(AgendaMapper.convertToEntity(agendaDTO)));
+    public AgendaResponse postPauta(@Valid @RequestBody AgendaRequest agendaRequest) {
+        return AgendaMapper.convertToResponse(agendaService.save(AgendaMapper.convertToEntity(agendaRequest)));
     }
     
     @GetMapping
@@ -57,7 +59,7 @@ public class AgendaController {
         value = "Abrir uma sessão para votação em uma pauta",
         notes = "Necessário um ID de pauta válido"
     )
-    public AgendaResponse openSession(@RequestBody SessionRequest sessionRequest) {
+    public AgendaResponse openSession(@Valid @RequestBody SessionRequest sessionRequest) {
         Long duracaoEmMinutos = sessionRequest.getDurationInMinutes();
         return AgendaMapper.convertToResponse(agendaService.openSession(AgendaMapper.sessionToAgendaEntity(sessionRequest), duracaoEmMinutos));
     }

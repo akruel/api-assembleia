@@ -3,7 +3,8 @@ package br.com.sicredi.assembleia.v1.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +27,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("v1/votes")
-public class VotoController {
+public class VoteController {
     @Autowired
     private VoteService votoService;
-
-    @Autowired
-    ModelMapper modelMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,7 +37,7 @@ public class VotoController {
         value = "Votar em uma pauta",
         notes = "Necessita que a pauta esteja com a sessão aberta"
         )
-    public Vote postVoto(@RequestBody VoteRequest voteRequest) {
+    public Vote postVoto(@Valid @RequestBody VoteRequest voteRequest) {
         return votoService.save(VoteMapper.convertToEntity(voteRequest));
     }
 
