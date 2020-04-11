@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.sicredi.assembleia.mapper.AgendaMapper;
 import br.com.sicredi.assembleia.service.AgendaService;
 import br.com.sicredi.assembleia.v1.dto.request.AgendaRequest;
 import br.com.sicredi.assembleia.v1.dto.request.SessionRequest;
 import br.com.sicredi.assembleia.v1.dto.response.AgendaResponse;
+import br.com.sicredi.assembleia.v1.mapper.AgendaMapper;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -31,6 +31,7 @@ public class AgendaController {
     private AgendaService agendaService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Criar uma pauta")
     public AgendaResponse postPauta(@Valid @RequestBody AgendaRequest agendaRequest) {
         return AgendaMapper.convertToResponse(agendaService.save(AgendaMapper.convertToEntity(agendaRequest)));
