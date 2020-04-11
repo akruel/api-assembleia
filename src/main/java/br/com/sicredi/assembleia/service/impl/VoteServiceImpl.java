@@ -10,15 +10,17 @@ import org.springframework.stereotype.Service;
 import br.com.sicredi.assembleia.client.UserInfoClient;
 import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
 import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
+import br.com.sicredi.assembleia.exception.SessionNotOpenException;
+import br.com.sicredi.assembleia.exception.UnableToVoteException;
 import br.com.sicredi.assembleia.model.Agenda;
 import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.model.VotePK;
 import br.com.sicredi.assembleia.repository.VoteRepository;
 import br.com.sicredi.assembleia.service.AgendaService;
 import br.com.sicredi.assembleia.service.VoteService;
-import br.com.sicredi.assembleia.util.ResultEnum;
 import br.com.sicredi.assembleia.util.StatusEnum;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
+import br.com.sicredi.assembleia.v1.mapper.SessionMapper;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -42,7 +44,7 @@ public class VoteServiceImpl implements VoteService {
         boolean sessaoAtiva = sessionEnd != null && LocalDateTime.now().isBefore(sessionEnd);
 
         if (!sessaoAtiva) {
-            throw new ResourceNotFoundException("Sessão para a pauta " + agenda.getName() + " não está aberta!");
+            throw new SessionNotOpenException("Sessão para a pauta " + agenda.getName() + " não está aberta!");
         }
 
         if (voteRepository.findByPkAssociated(cpf).isPresent()) {
@@ -50,7 +52,7 @@ public class VoteServiceImpl implements VoteService {
         }
 
         if (userInfoClient.checkStatusToVote(cpf).getStatus() == StatusEnum.UNABLE_TO_VOTE) {
-            throw new ResourceNotFoundException("Associado " + cpf + " não está habilitado para votar!");
+            throw new UnableToVoteException("Associado " + cpf + " não está habilitado para votar!");
         }
 
         VotePK pk = VotePK.builder()
@@ -70,6 +72,12 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public SessionResponse calculateResult(Long agendaID) {
+        Agenda agenda = agendaService.findById(agendaID);
+
+        if (agenda.getSessionStart() == null) {
+            throw new ResourceNotFoundException("Sessão não iniciada!");
+        }
+
         List <Vote> votes = voteRepository.findByPkAgendaId(agendaID);
 
         List <Vote> votesNo = votes.stream()
@@ -85,23 +93,7 @@ public class VoteServiceImpl implements VoteService {
                           .map(v -> v.isDecision() ? 1 : -1)
                           .reduce(0, (subtotal, element) -> subtotal + element);
                                           
-        return SessionResponse.builder()
-                               .votesTotal(votes.size())
-                               .votesNo(votesNo.size())
-                               .votesYes(votesYes.size())
-                               .result(this.generateResult(result).toString())
-                               .build();
-    }
-
-    private ResultEnum generateResult(Integer result) {
-        if (result == null) {
-			return ResultEnum.NO_VOTES;
-		} else if (result == 0) {
-			return ResultEnum.TIED_VOTE;
-		} else if (result < 0) {
-			return ResultEnum.NO;
-		}
-		return ResultEnum.YES;
+        return SessionMapper.convertToResponse(votesYes.size(), votesNo.size(), votes.size(), result);
     }
 
 }
