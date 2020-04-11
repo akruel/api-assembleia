@@ -1,4 +1,4 @@
-package br.com.sicredi.assembleia.mapper;
+package br.com.sicredi.assembleia.v1.mapper;
 
 import java.time.LocalDateTime;
 

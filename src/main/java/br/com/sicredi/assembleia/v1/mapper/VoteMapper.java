@@ -1,4 +1,4 @@
-package br.com.sicredi.assembleia.mapper;
+package br.com.sicredi.assembleia.v1.mapper;
 
 import br.com.sicredi.assembleia.model.Agenda;
 import br.com.sicredi.assembleia.model.Vote;

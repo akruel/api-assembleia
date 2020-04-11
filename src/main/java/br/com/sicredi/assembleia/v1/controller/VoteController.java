@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.sicredi.assembleia.mapper.VoteMapper;
 import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.service.VoteService;
 import br.com.sicredi.assembleia.v1.dto.request.VoteRequest;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
 import br.com.sicredi.assembleia.v1.dto.response.VoteResponse;
+import br.com.sicredi.assembleia.v1.mapper.VoteMapper;
 import io.swagger.annotations.ApiOperation;
 
 
