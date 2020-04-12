@@ -1,6 +1,5 @@
 package br.com.sicredi.assembleia.service;
 
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -19,7 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import br.com.sicredi.assembleia.client.UserInfoClient;
 import br.com.sicredi.assembleia.client.response.UserInfoClientResponse;
 import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
-import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.exception.SessionNotOpenException;
 import br.com.sicredi.assembleia.exception.UnableToVoteException;
 import br.com.sicredi.assembleia.model.Agenda;

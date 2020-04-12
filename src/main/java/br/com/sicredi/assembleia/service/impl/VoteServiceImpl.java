@@ -72,27 +72,35 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public SessionResponse calculateResult(Long agendaID) {
         Agenda agenda = agendaService.findById(agendaID);
+        Integer result;
+        int votesNo;
+        int votesYes;
 
         if (agenda.getSessionStart() == null) {
             throw new SessionNotOpenException("Sessão não iniciada!");
         }
-
+        
         List <Vote> votes = voteRepository.findByPkAgendaId(agendaID);
 
-        List <Vote> votesNo = votes.stream()
-                                   .filter(v -> v.isDecision() == Boolean.FALSE)
-                                   .collect(Collectors.toList());
+        if (!votes.isEmpty()) {
+            votesNo = votes.stream()
+                            .filter(v -> v.isDecision() == Boolean.FALSE)
+                            .collect(Collectors.toList()).size();
+            
+            votesYes = votes.stream()
+                            .filter(v -> v.isDecision() == Boolean.TRUE)
+                            .collect(Collectors.toList()).size();
 
-        
-        List <Vote> votesYes = votes.stream()
-                                   .filter(v -> v.isDecision() == Boolean.TRUE)
-                                   .collect(Collectors.toList());
-
-        int result = votes.stream()
+            result = votes.stream()
                           .map(v -> v.isDecision() ? 1 : -1)
                           .reduce(0, (subtotal, element) -> subtotal + element);
+        } else {
+            result = null;
+            votesYes = 0;
+            votesNo = 0;
+        }                                   
                                           
-        return SessionMapper.convertToResponse(votesYes.size(), votesNo.size(), votes.size(), result);
+        return SessionMapper.convertToResponse(votesYes, votesNo, votes.size(), result);
     }
 
 }
