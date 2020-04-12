@@ -16,7 +16,7 @@ public class SessionMapper {
                                .result(generateResult(result).toString()).build();
     }
 
-    private static ResultEnum generateResult(Integer result) {
+    public static ResultEnum generateResult(Integer result) {
         if (result == null) {
 			return ResultEnum.NO_VOTES;
 		} else if (result == 0) {

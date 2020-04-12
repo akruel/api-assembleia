@@ -116,7 +116,7 @@ public class VoteServiceTest {
     private Vote makeVote(boolean decision) {
 		VotePK pk = VotePK.builder()
 						  .agenda(makeAgenda(1))
-						  .associated("10020030040")
+						  .associated("73529716022")
 						  .build();
 
 		return Vote.builder()

@@ -19,5 +19,6 @@ public class Vote {
 
     @EmbeddedId
     private VotePK pk;
+
     private boolean decision;
 }

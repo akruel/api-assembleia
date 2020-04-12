@@ -51,6 +51,8 @@ public class VoteControllerTest {
 
 	@MockBean
 	private AgendaService agendaService;
+
+    private final String INVALID_CPF = "10020030040";
     
     @Test
 	void postVote() throws JsonProcessingException, Exception {
@@ -112,6 +114,16 @@ public class VoteControllerTest {
 		Mockito.verify(voteService, times(1)).save(makeVote(true));
 		Mockito.verifyNoMoreInteractions(voteService);
 	}
+
+	@Test
+	void postVoteWithInvalidCpf() throws JsonProcessingException, Exception {
+		mockMvc.perform(post("/v1/votes")
+			   .contentType("application/json")
+			   .content(objectMapper.writeValueAsString(makeVoteRequestInvalidCpf("Sim"))))
+			   .andExpect(status().isBadRequest());
+
+		Mockito.verifyNoMoreInteractions(voteService);
+	}
 	
 	@Test
 	void getResult() throws JsonProcessingException, Exception {
@@ -161,7 +173,7 @@ public class VoteControllerTest {
 	private Vote makeVote(boolean decision) {
 		VotePK pk = VotePK.builder()
 						  .agenda(makeAgendaToVote(1L))
-						  .associated("86281690087")
+						  .associated("73529716022")
 						  .build();
 
 		return Vote.builder()
@@ -173,7 +185,7 @@ public class VoteControllerTest {
 	private Vote makeVoteReturn(boolean decision) {
 		VotePK pk = VotePK.builder()
 						  .agenda(makeAgendaWithSession(1L))
-						  .associated("86281690087")
+						  .associated("73529716022")
 						  .build();
 
 		return Vote.builder()
@@ -185,10 +197,19 @@ public class VoteControllerTest {
     private VoteRequest makeVoteRequest(String decision) {
         VoteRequest voteRequest = new VoteRequest();
         voteRequest.setAgendaID(1L);
-        voteRequest.setAssociated("86281690087");
+        voteRequest.setAssociated("73529716022");
         voteRequest.setDecision(decision);
         return voteRequest;
 	}
+
+	private VoteRequest makeVoteRequestInvalidCpf(String decision) {
+        VoteRequest voteRequest = new VoteRequest();
+        voteRequest.setAgendaID(1L);
+        voteRequest.setAssociated(INVALID_CPF);
+        voteRequest.setDecision(decision);
+        return voteRequest;
+	}
+	
 	
 	private SessionResponse makeSessionResponse() {
 		SessionResponse sessionResponse = new SessionResponse();

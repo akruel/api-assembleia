@@ -40,7 +40,7 @@ public class AgendaServiceTest {
 
     @Test
     void findById() {
-        Mockito.when(agendaRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(new Agenda()));
+        Mockito.when(agendaRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(Agenda.builder().build()));
         agendaService.findById(1L);
         ArgumentCaptor<Long> longCaptor = ArgumentCaptor.forClass(Long.class);
         Mockito.verify(agendaRepository, Mockito.only()).findById(longCaptor.capture());
