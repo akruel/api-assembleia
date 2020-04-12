@@ -62,7 +62,7 @@ public class AgendaController {
     )
     public AgendaResponse openSession(@Valid @RequestBody SessionRequest sessionRequest) {
         Long duracaoEmMinutos = sessionRequest.getDurationInMinutes();
-        return AgendaMapper.convertToResponse(agendaService.openSession(AgendaMapper.sessionToAgendaEntity(sessionRequest), duracaoEmMinutos));
+        return AgendaMapper.convertToResponse(agendaService.openSession(sessionRequest.getAgendaID(), duracaoEmMinutos));
     }
 
 }
