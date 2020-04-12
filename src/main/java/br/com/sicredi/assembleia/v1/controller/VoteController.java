@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.service.VoteService;
 import br.com.sicredi.assembleia.v1.dto.request.VoteRequest;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
@@ -29,7 +28,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("v1/votes")
 public class VoteController {
     @Autowired
-    private VoteService votoService;
+    private VoteService voteService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -37,15 +36,15 @@ public class VoteController {
         value = "Votar em uma pauta",
         notes = "Necessita que a pauta esteja com a sessão aberta"
         )
-    public Vote postVoto(@Valid @RequestBody VoteRequest voteRequest) {
-        return votoService.save(VoteMapper.convertToEntity(voteRequest));
+    public VoteResponse postVoto(@Valid @RequestBody VoteRequest voteRequest) {
+        return VoteMapper.convertToResponse(voteService.save(VoteMapper.convertToEntity(voteRequest)));
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Buscar todos os votos em todas as pautas")
     public List<VoteResponse> getVotos() {
-        return votoService.findAll()
+        return voteService.findAll()
                           .stream()
                           .map(VoteMapper::convertToResponse)
                           .collect(Collectors.toList());
@@ -55,7 +54,7 @@ public class VoteController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Buscar o resultado da votação em uma pauta")
     public SessionResponse getResult(@PathVariable Long agendaID) {
-        return votoService.calculateResult(agendaID);
+        return voteService.calculateResult(agendaID);
     }
 
 }

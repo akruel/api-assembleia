@@ -1,4 +1,4 @@
-package br.com.sicredi.assembleia.services;
+package br.com.sicredi.assembleia.service;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,7 +25,6 @@ import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.model.VotePK;
 import br.com.sicredi.assembleia.repository.AgendaRepository;
 import br.com.sicredi.assembleia.repository.VoteRepository;
-import br.com.sicredi.assembleia.service.AgendaService;
 import br.com.sicredi.assembleia.service.impl.VoteServiceImpl;
 import br.com.sicredi.assembleia.util.StatusEnum;
 
@@ -74,7 +73,7 @@ public class VoteServiceTest {
 
     @Test
     void saveCpfDuplicated() {
-        Mockito.when(agendaService.findById(anyLong())).thenReturn(makeAgenda(1));
+        Mockito.when(agendaService.findById(anyLong())).thenReturn(makeAgendaWithSession(1));
         Mockito.when(voteRepository.findByPkAssociated(anyString())).thenReturn(Optional.of(new Vote()));
 
         Assertions.assertThrows(ResourceDuplicatedException.class, () -> voteService.save(makeVote(true)));

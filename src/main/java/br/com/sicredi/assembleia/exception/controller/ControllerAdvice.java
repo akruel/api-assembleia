@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import br.com.sicredi.assembleia.exception.ExceptionResponse;
 import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
 import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
+import br.com.sicredi.assembleia.exception.SessionNotOpenException;
+import br.com.sicredi.assembleia.exception.UnableToVoteException;
 
 @RestControllerAdvice
 public class ControllerAdvice extends ResponseEntityExceptionHandler {
@@ -25,9 +27,19 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex, HttpStatus.CONFLICT));
     }
 
+    @ExceptionHandler(SessionNotOpenException.class)
+    protected ResponseEntity<Object> handleSessionNotOpenException(SessionNotOpenException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(ex, HttpStatus.BAD_REQUEST));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(ex, HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(UnableToVoteException.class)
+    protected ResponseEntity<Object> handleUnableToVoteException(UnableToVoteException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionResponse(ex, HttpStatus.FORBIDDEN));
     }
 
     @Override

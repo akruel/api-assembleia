@@ -8,5 +8,5 @@ public interface AgendaService {
     Agenda save(Agenda agenda);
     Agenda findById(Long id);
     List<Agenda> findAll();
-    Agenda openSession(Agenda agenda, Long durationInMinutes);
+    Agenda openSession(Long agendaID, Long durationInMinutes);
 }

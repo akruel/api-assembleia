@@ -1,4 +1,4 @@
-package br.com.sicredi.assembleia.services;
+package br.com.sicredi.assembleia.service;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 
@@ -66,7 +66,7 @@ public class AgendaServiceTest {
     @Test
     void openSession() {
         Mockito.when(agendaRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(makeAgenda()));
-        agendaService.openSession(makeAgenda(), null);
+        agendaService.openSession(Long.valueOf(1), null);
 
         ArgumentCaptor<Agenda> agendaCaptor = ArgumentCaptor.forClass(Agenda.class);
         ArgumentCaptor<Long> longCaptor = ArgumentCaptor.forClass(Long.class);
@@ -83,7 +83,7 @@ public class AgendaServiceTest {
     void openSessionNotFound() {
         Mockito.when(agendaRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> agendaService.openSession(makeAgenda(), anyLong()));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> agendaService.openSession(Long.valueOf(1), anyLong()));
     }
 
     private Agenda makeAgenda () {

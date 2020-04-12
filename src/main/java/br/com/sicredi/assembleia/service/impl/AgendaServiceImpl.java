@@ -18,8 +18,8 @@ public class AgendaServiceImpl implements AgendaService {
     private AgendaRepository agendaRepository;
 
     @Override
-    public Agenda save(Agenda pauta) {
-        return agendaRepository.save(pauta);
+    public Agenda save(Agenda agenda) {
+        return agendaRepository.save(agenda);
     }
 
     @Override
@@ -33,15 +33,15 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
-    public Agenda openSession(Agenda agenda, Long durationInMinutes) {
-        Agenda actualAgenda = this.findById(agenda.getId());
-        actualAgenda.setSessionStart(LocalDateTime.now());
+    public Agenda openSession(Long agendaID, Long durationInMinutes) {
+        Agenda agenda = findById(agendaID);
+        agenda.setSessionStart(LocalDateTime.now());
         if (durationInMinutes != null) {
-            actualAgenda.setSessionEnd(actualAgenda.getSessionStart().plusMinutes(durationInMinutes));
+            agenda.setSessionEnd(agenda.getSessionStart().plusMinutes(durationInMinutes));
         } else {
-            actualAgenda.setSessionEnd(actualAgenda.getSessionStart().plusMinutes(1));
+            agenda.setSessionEnd(agenda.getSessionStart().plusMinutes(1));
         }
-        return agendaRepository.save(actualAgenda);
+        return agendaRepository.save(agenda);
     }
 
 }
