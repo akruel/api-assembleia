@@ -141,6 +141,18 @@ public class VoteControllerTest {
 		Mockito.verify(voteService, times(1)).calculateResult(1L);
 		Mockito.verifyNoMoreInteractions(voteService);
 	}
+
+	@Test
+	void getResultSessionNotOpen() throws JsonProcessingException, Exception {
+		Mockito.when(voteService.calculateResult(1L)).thenThrow(new SessionNotOpenException(""));
+
+		mockMvc.perform(get("/v1/votes/sessionResult/1")
+			   .contentType("application/json"))
+			   .andExpect(status().isBadRequest());
+
+		Mockito.verify(voteService, times(1)).calculateResult(1L);
+		Mockito.verifyNoMoreInteractions(voteService);
+	}
 	
 	@Test
 	void getResultWithAgenda404() throws JsonProcessingException, Exception {

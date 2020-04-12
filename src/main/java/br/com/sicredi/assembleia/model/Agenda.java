@@ -10,6 +10,7 @@ import javax.persistence.Id;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Tolerate;
 
 @Data
 @Builder
@@ -21,6 +22,10 @@ public class Agenda implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
+    @Tolerate
+    public Agenda() {
+        // Construtor vazio por necessidade do JPA
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

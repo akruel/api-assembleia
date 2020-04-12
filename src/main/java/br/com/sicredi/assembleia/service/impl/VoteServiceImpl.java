@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.sicredi.assembleia.client.UserInfoClient;
 import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
-import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.exception.SessionNotOpenException;
 import br.com.sicredi.assembleia.exception.UnableToVoteException;
 import br.com.sicredi.assembleia.model.Agenda;
@@ -75,7 +74,7 @@ public class VoteServiceImpl implements VoteService {
         Agenda agenda = agendaService.findById(agendaID);
 
         if (agenda.getSessionStart() == null) {
-            throw new ResourceNotFoundException("Sessão não iniciada!");
+            throw new SessionNotOpenException("Sessão não iniciada!");
         }
 
         List <Vote> votes = voteRepository.findByPkAgendaId(agendaID);

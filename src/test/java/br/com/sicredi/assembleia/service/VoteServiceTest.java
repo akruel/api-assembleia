@@ -1,5 +1,6 @@
 package br.com.sicredi.assembleia.service;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import br.com.sicredi.assembleia.client.UserInfoClient;
 import br.com.sicredi.assembleia.client.response.UserInfoClientResponse;
 import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
+import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.exception.SessionNotOpenException;
 import br.com.sicredi.assembleia.exception.UnableToVoteException;
 import br.com.sicredi.assembleia.model.Agenda;
@@ -85,13 +87,23 @@ public class VoteServiceTest {
         userInfo.setStatus(StatusEnum.UNABLE_TO_VOTE);
 
         Agenda agenda = makeAgenda(1);
-        agenda.setSessionEnd(LocalDateTime.now());
+        agenda.setSessionStart(LocalDateTime.now());
         agenda.setSessionEnd(LocalDateTime.now().plusMinutes(1));
 
         Mockito.when(agendaService.findById(anyLong())).thenReturn(agenda);
         Mockito.when(userInfoClient.checkStatusToVote(Mockito.anyString())).thenReturn(userInfo);
 
         Assertions.assertThrows(UnableToVoteException.class, () -> voteService.save(makeVote(true)));
+    }
+
+    @Test
+    void calculateResultSessionNotOpen() {
+        Agenda agenda = makeAgenda(1);
+        agenda.setSessionStart(null);
+
+        Mockito.when(agendaService.findById(anyLong())).thenReturn(agenda);
+
+        Assertions.assertThrows(SessionNotOpenException.class, () -> voteService.calculateResult(anyLong()));
     }
 
     
