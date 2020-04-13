@@ -6,7 +6,7 @@ Trello do Projeto: https://trello.com/b/LLuq5hxp/api-assembleia
 ## Objetivo
 O objetivo da aplicação é controlar votações em pautas.
 
-A aplicação permite que seja criada uma pauta, abrir uma sessão em uma pauta, votar e calcular o resultado dos votos.
+A aplicação permite que seja criada uma pauta, abrir uma sessão em uma pauta, votar e calcular o resultado dos votos da pauta.
 
 ## Documentação
 Foi utilizado o Swagger para documentar.
@@ -35,7 +35,23 @@ Caso o serviço esteja disponível, será calculado os votos, excluindo aqueles 
 ## Execução
 A aplicação está disponibilizada no heroku: https://api-assembleia.herokuapp.com/
 
-Caso deseja rodar localmente, deverá clonar ou baixar o repositório e executar na pasta do repositório o comando: docker build -t <tag-name> ./
+Caso deseje rodar localmente, deverá clonar ou baixar o repositório e executar na pasta do repositório o comando: 
+```sh
+docker build -t <tag-name> ./
+```
   
-Após conclusão, executar o container com o comando: docker run -p 8080:8080 -t <tag-name>
+Após conclusão, executar o container com o comando: 
+```sh
+docker run -p 8080:8080 -t <tag-name>
+```
 
+## Rotas da Aplicação
+Há no trello um card com os anexos da collection e as environments do Postman: https://trello.com/c/cC4S92Vq/17-collection-do-postman
+
+Há também a documentação no swagger, mas segue também as rotas aqui:
+
+Para cadastrar uma pauta, buscar pautas ou buscar uma pauta específica: v1/agendas/{id}
+Para abrir uma sessão: v1/agendas/openSession
+
+Para cadastrar um voto e buscar votos: v1/votes
+Para buscar o resultado da votação de uma pauta: v1/votes/sessionResult/{pautaID}
