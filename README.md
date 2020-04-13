@@ -51,7 +51,9 @@ Há no trello um card com os anexos da collection e as environments do Postman: 
 Há também a documentação no swagger, mas segue também as rotas aqui:
 
 Para cadastrar uma pauta, buscar pautas ou buscar uma pauta específica: v1/agendas/{id}
+
 Para abrir uma sessão: v1/agendas/openSession
 
 Para cadastrar um voto e buscar votos: v1/votes
+
 Para buscar o resultado da votação de uma pauta: v1/votes/sessionResult/{pautaID}
