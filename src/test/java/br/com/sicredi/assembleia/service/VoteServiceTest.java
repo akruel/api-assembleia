@@ -1,7 +1,7 @@
 package br.com.sicredi.assembleia.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -27,6 +27,8 @@ import br.com.sicredi.assembleia.repository.AgendaRepository;
 import br.com.sicredi.assembleia.repository.VoteRepository;
 import br.com.sicredi.assembleia.service.impl.VoteServiceImpl;
 import br.com.sicredi.assembleia.util.StatusEnum;
+import br.com.sicredi.assembleia.util.StatusVote;
+import br.com.sicredi.assembleia.util.VoteCache;
 
 @ExtendWith(SpringExtension.class)
 public class VoteServiceTest {
@@ -45,6 +47,9 @@ public class VoteServiceTest {
     @Mock
     private UserInfoClient userInfoClient;
 
+    @Mock
+    private VoteCache voteCache;
+
     @Test
     void save() {
         UserInfoClientResponse userInfo = new UserInfoClientResponse();
@@ -56,7 +61,7 @@ public class VoteServiceTest {
         voteService.save(makeVote(true));
 
         ArgumentCaptor<Vote> topicCaptor = ArgumentCaptor.forClass(Vote.class);
-        Mockito.verify(voteRepository, Mockito.times(1)).findByPkAssociated(makeVote(true).getPk().getAssociated());
+        Mockito.verify(voteRepository, Mockito.times(1)).findById(makeVote(true).getPk());
         Mockito.verify(voteRepository, Mockito.times(1)).save(topicCaptor.capture());
 
         Assertions.assertEquals(makeVote(true).getPk().getAssociated(), topicCaptor.getValue().getPk().getAssociated());
@@ -74,7 +79,7 @@ public class VoteServiceTest {
     @Test
     void saveCpfDuplicated() {
         Mockito.when(agendaService.findById(anyLong())).thenReturn(makeAgendaWithSession(1));
-        Mockito.when(voteRepository.findByPkAssociated(anyString())).thenReturn(Optional.of(new Vote()));
+        Mockito.when(voteRepository.findById(any())).thenReturn(Optional.of(new Vote()));
 
         Assertions.assertThrows(ResourceDuplicatedException.class, () -> voteService.save(makeVote(true)));
     }
@@ -131,7 +136,8 @@ public class VoteServiceTest {
 
 		return Vote.builder()
 					.pk(pk)
-					.decision(decision)
+                    .decision(decision)
+                    .status(StatusVote.CONFIRMED)
 					.build();	
 	}
 }

@@ -21,4 +21,6 @@ public class VoteResponse {
     private AgendaResponse agenda;
     @ApiModelProperty("Decisão do associado")
     private Boolean decision;
+    @ApiModelProperty("Status do voto")
+    private String status;
 }
