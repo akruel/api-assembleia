@@ -90,7 +90,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public void delete(Vote vote) {
         voteRepository.delete(vote);
-    }
+    }   
 
     @Override
     public SessionResponse calculateResult(Long agendaID) {
@@ -143,15 +143,15 @@ public class VoteServiceImpl implements VoteService {
                       .forEach(this::delete);
     }
 
-    private Vote setConfirmed(Vote v) {
-        v.setStatus(StatusVote.CONFIRMED);
-        return v;
+    private Vote setConfirmed(Vote voteNotConfirmed) {
+        voteNotConfirmed.setStatus(StatusVote.CONFIRMED);
+        return voteNotConfirmed;
     }
 
     private StatusEnum checkStatusAssociated (String cpf) {
         StatusEnum response = userInfoClient.checkStatusToVote(cpf).getStatus();
         if(response == StatusEnum.NOT_CONFIRMED){
-            throw new ResourceNotFoundException("Não foi possível confirmar a votação, pois o serviço de validação do CPF do associado está fora!");
+            throw new ResourceNotFoundException("Não foi possível confirmar a votação, pois o serviço de validação do CPF do associado está indisponível!");
         }
         return response;
     }
