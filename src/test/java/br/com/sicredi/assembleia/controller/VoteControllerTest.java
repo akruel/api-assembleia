@@ -16,8 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +33,8 @@ import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.model.VotePK;
 import br.com.sicredi.assembleia.service.AgendaService;
 import br.com.sicredi.assembleia.service.VoteService;
+import br.com.sicredi.assembleia.util.StatusVote;
+import br.com.sicredi.assembleia.util.VoteCache;
 import br.com.sicredi.assembleia.v1.controller.VoteController;
 import br.com.sicredi.assembleia.v1.dto.request.VoteRequest;
 import br.com.sicredi.assembleia.v1.dto.response.SessionResponse;
@@ -52,7 +57,7 @@ public class VoteControllerTest {
 	@MockBean
 	private AgendaService agendaService;
 
-    private final String INVALID_CPF = "10020030040";
+	private final String INVALID_CPF = "10020030040";
     
     @Test
 	void postVote() throws JsonProcessingException, Exception {
@@ -203,6 +208,7 @@ public class VoteControllerTest {
 		return Vote.builder()
 					.pk(pk)
 					.decision(decision)
+					.status(StatusVote.CONFIRMED)
 					.build();	
     }
     

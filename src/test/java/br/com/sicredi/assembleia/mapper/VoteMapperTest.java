@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import br.com.sicredi.assembleia.model.Agenda;
 import br.com.sicredi.assembleia.model.Vote;
 import br.com.sicredi.assembleia.model.VotePK;
+import br.com.sicredi.assembleia.util.StatusVote;
 import br.com.sicredi.assembleia.v1.dto.request.VoteRequest;
 import br.com.sicredi.assembleia.v1.dto.response.VoteResponse;
 import br.com.sicredi.assembleia.v1.mapper.VoteMapper;
@@ -42,7 +43,8 @@ public class VoteMapperTest {
 
 		return Vote.builder()
 				   .pk(pk)
-				   .decision(decision)
+                   .decision(decision)
+                   .status(StatusVote.CONFIRMED)
 				   .build();	
     }
     

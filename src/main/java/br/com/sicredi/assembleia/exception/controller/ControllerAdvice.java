@@ -18,6 +18,7 @@ import br.com.sicredi.assembleia.exception.ResourceDuplicatedException;
 import br.com.sicredi.assembleia.exception.ResourceNotFoundException;
 import br.com.sicredi.assembleia.exception.SessionNotOpenException;
 import br.com.sicredi.assembleia.exception.UnableToVoteException;
+import br.com.sicredi.assembleia.exception.VoteNotConfirmedException;
 
 @RestControllerAdvice
 public class ControllerAdvice extends ResponseEntityExceptionHandler {
@@ -40,6 +41,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnableToVoteException.class)
     protected ResponseEntity<Object> handleUnableToVoteException(UnableToVoteException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionResponse(ex, HttpStatus.FORBIDDEN));
+    }
+
+    @ExceptionHandler(VoteNotConfirmedException.class)
+    protected ResponseEntity<Object> handleVoteNotConfirmedException(VoteNotConfirmedException ex) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ExceptionResponse(ex, HttpStatus.CREATED));
     }
 
     @Override
