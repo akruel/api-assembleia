@@ -11,5 +11,5 @@ RUN mkdir /app
 
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/api-assembleia.jar
 
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=docker", "/app/api-assembleia.jar"]
+ENTRYPOINT ["java", "-jar", "/app/api-assembleia.jar"]
 
