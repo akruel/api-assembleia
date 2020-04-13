@@ -48,6 +48,9 @@ Pensando em perfomance, poderiam ser criadas replicas da API conforme a demanda 
 Foi utilizado o versionamento na URI. Cada versão possui um pacote contendo seus contratos (request/response) e seus controller's.
 Ao disponibilizar uma nova versão poderia ser criada um novo pacote apenas alterando o URI de v1 para v2, por exemplo.
 
+## Mensageria e filas
+Não foi utilizada mensageria/filas pelo meu pouco conhecimento na implementação, então optei utilizar o tempo da execução do teste com outras tarefas ao invés de gastá-lo na tentativa de implementar esse bônus
+
 ## Execução
 A aplicação está disponibilizada no heroku: https://api-assembleia.herokuapp.com/
 
